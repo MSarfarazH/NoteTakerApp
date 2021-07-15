@@ -16,6 +16,13 @@ app.get("/api/notes", function(req, res){
     res.json(JSON.parse(notes))
 })
 
+app.get("/", function(req, res){
+    res.sendFile(path.join(__dirname, "./public/index.html"))
+}) 
+
+app.listen(PORT, function () {
+    console.log('Note Taker is listening on port ' + PORT);
+})
 
 
 

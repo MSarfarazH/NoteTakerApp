@@ -3,6 +3,11 @@ const express = require("express");
 const fs = require("fs");
 const path = require("path");
 const app = express();
+const notes = fs.readFileSync(path.join(__dirname, "./db/db.json" ), "utf8")
+
+// Sets up the Express app to handle data parsing
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 //Establishing the port
 const PORT = process.env.PORT || 3001;
@@ -15,7 +20,7 @@ app.get("/notes", function(req, res){
 
 //Created route for api/notes page
 app.get("/api/notes", function(req, res){
-    const notes = fs.readFileSync(path.join(__dirname, "./db/db.json" ), "utf8")
+    
     console.log(notes)
     res.json(JSON.parse(notes))
 })
@@ -24,6 +29,29 @@ app.get("/api/notes", function(req, res){
 app.get("/", function(req, res){
     res.sendFile(path.join(__dirname, "./public/index.html"))
 }) 
+
+//Creates and stores a new note
+app.post("/api/notes", function(req, res) {
+
+    const addNote = req.body;
+    const thisID = notes.length;
+
+    addNote["id"] = thisID +1;
+    thisID ++;
+    console.log(addNote);
+
+    notes.push(addNote)
+
+    fs.writeFile("db/db.json", JSON.stringify(notes), function (err) {
+        if (err) {
+            console.log("error")
+            return console.log(err);
+        }
+    })
+    
+})
+
+
 
 //Shows that the server is now listenting on the given port
 app.listen(PORT, function () {

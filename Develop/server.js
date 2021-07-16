@@ -4,7 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const app = express();
 let notes = fs.readFileSync(path.join(__dirname, "./db/db.json" ), "utf8")
-// console.log(notes)
+console.log(notes)
 
 // Sets up the Express app to handle data parsing
 app.use(express.urlencoded({ extended: true }));
@@ -23,6 +23,7 @@ app.get("/notes", function(req, res){
 app.get("/api/notes", function(req, res){
     
     res.json(JSON.parse(notes))
+    // console.log(notes.type)
 })
 
 //Created route for the homepage
@@ -38,12 +39,11 @@ app.post("/api/notes", function(req, res) {
 
     addNote["id"] = thisID +1;
     thisID++;
-    notes = JSON.parse(notes);
+    // notes = JSON.parse(notes);
     
-
     notes.push(addNote);
     console.log(addNote);
-    
+
     fs.writeFile("db/db.json", JSON.stringify(notes), function (err) {
         if (err) {
             console.log("error")

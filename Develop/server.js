@@ -3,7 +3,7 @@ const express = require("express");
 const fs = require("fs");
 const path = require("path");
 const app = express();
-let notes = fs.readFileSync(path.join(__dirname, "./db/db.json" ), "utf8")
+let notes = JSON.parse(fs.readFileSync(path.join(__dirname, "./db/db.json" ), "utf8"))
 console.log(notes)
 
 // Sets up the Express app to handle data parsing
@@ -19,11 +19,11 @@ app.get("/notes", function(req, res){
     res.sendFile(path.join(__dirname, "./public/notes.html"))
 }) 
 
-//Created route for api/notes page
+//Parsed api/notes page
 app.get("/api/notes", function(req, res){
     
-    res.json(JSON.parse(notes))
-    // console.log(notes.type)
+    res.json(notes)
+    console.log(notes)
 })
 
 //Created route for the homepage
@@ -39,7 +39,6 @@ app.post("/api/notes", function(req, res) {
 
     addNote["id"] = thisID +1;
     thisID++;
-    // notes = JSON.parse(notes);
     
     notes.push(addNote);
     console.log(addNote);
@@ -50,8 +49,20 @@ app.post("/api/notes", function(req, res) {
             return console.log(err);
         }
     })
-    
+    return res.status(200).send("Note Added");
 })
+
+//Deletes a note
+app.delete("/api/notes/:id", function(req, res) {
+    notes.splice(req.params.id, 1);
+    
+    fs.writeFile("db/db.json", JSON.stringify(notes), function (err) {
+        if (err) {
+            console.log("error")
+            return console.log(err);
+        }
+    })
+});
 
 //Shows that the server is now listenting on the given port
 app.listen(PORT, function () {

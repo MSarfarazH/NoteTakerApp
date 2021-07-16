@@ -3,7 +3,7 @@ const express = require("express");
 const fs = require("fs");
 const path = require("path");
 const app = express();
-const notes = fs.readFileSync(path.join(__dirname, "./db/db.json" ), "utf8")
+let notes = fs.readFileSync(path.join(__dirname, "./db/db.json" ), "utf8")
 // console.log(notes)
 
 // Sets up the Express app to handle data parsing
@@ -37,12 +37,13 @@ app.post("/api/notes", function(req, res) {
     let thisID = notes.length;
 
     addNote["id"] = thisID +1;
-    thisID ++;
-    JSON.parse(notes);
-    console.log(addNote);
+    thisID++;
+    notes = JSON.parse(notes);
+    
 
     notes.push(addNote);
-
+    console.log(addNote);
+    
     fs.writeFile("db/db.json", JSON.stringify(notes), function (err) {
         if (err) {
             console.log("error")
